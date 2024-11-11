@@ -1,24 +1,24 @@
 import requests
 from bs4 import BeautifulSoup
 import boto3
+from playwright.sync_api import sync_playwright
 import uuid
 
 def lambda_handler(event, context):
-    # URL de la página web que contiene la tabla
-    url = "https://www.igp.gob.pe/servicios/centro-sismologico-nacional/ultimo-sismo/sismos-reportados"
 
-    # Realizar la solicitud HTTP a la página web
-    response = requests.get(url)
-    if response.status_code != 200:
-        return {
-            'statusCode': response.status_code,
-            'body': 'Error al acceder a la página web'
-        }
+    with sync_playwright() as p:
 
-    # Parsear el contenido HTML de la página web
-    soup = BeautifulSoup(response.content, 'html.parser')
+        browser = p.chromium.launch(headless=True)
+        url = "https://www.igp.gob.pe/servicios/centro-sismologico-nacional/ultimo-sismo/sismos-reportados"
+        page = browser.new_page()
+        page.goto(url)
+        page
+        html = page.content()
+        browser.close()
 
-    # Encontrar la tabla en el HTML
+    
+    soup = BeautifulSoup(html, 'html.parser')
+
     table = soup.find('table')
     if not table:
         return {

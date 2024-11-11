@@ -10,6 +10,14 @@ provider:
   iam:
     role: arn:aws:iam::060098569939:role/LabRole
 
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    layer: true  
+
 functions:
   scrape_table:
     handler: scrap_table.lambda_handler  # Asegúrarse de que el nombre del archivo y la función coincidan
