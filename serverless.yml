@@ -18,6 +18,10 @@ functions:
     image:
       name: lambda-selenium
       command: ["sismos.lambda_handler"]
+    events:
+      - http:
+          path: sismos
+          method: get
 
 package:
   exclude:
