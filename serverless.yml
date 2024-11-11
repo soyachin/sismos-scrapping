@@ -1,5 +1,5 @@
 org: mirandasalazar
-service: api-web-scraping
+service: sismos-scrapping
 
 provider:
   name: aws
@@ -11,14 +11,23 @@ provider:
     role: arn:aws:iam::060098569939:role/LabRole
 
 functions:
-  scrape_table:
+  sismos:
+    handler: sismos.lambda_handler
     image:
-      name: lambda-imag
-    events:
-      - http:
-          path: /scrape/table
-          method: get
-          cors: true
+      name: lambda-selenium
+      command: ["sismos.lambda_handler"]
+
+package:
+  exclude:
+    - node_modules/**
+    - selenium-layer/**
+
+custom:
+  ecr:
+    images:
+      lambda-selenium:
+        path: ./
+
 resources:
   Resources:
     TablaWebScrapping:

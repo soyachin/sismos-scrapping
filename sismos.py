@@ -1,20 +1,30 @@
 import requests
 from bs4 import BeautifulSoup
 import boto3
-from playwright.sync_api import sync_playwright
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.chrome.options import Options
+import os
 import uuid
 
 def lambda_handler(event, context):
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--single-process")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.binary_location = "/opt/google/chrome/google-chrome"
 
-    with sync_playwright() as p:
+    # Initialize the WebDriver
+    driver = webdriver.Chrome(service=ChromeService("/usr/local/bin/chromedriver"), options=chrome_options)
 
-        browser = p.chromium.launch(headless=True)
-        url = "https://www.igp.gob.pe/servicios/centro-sismologico-nacional/ultimo-sismo/sismos-reportados"
-        page = browser.new_page()
-        page.goto(url)
-        page
-        html = page.content()
-        browser.close()
+    url = "https://www.igp.gob.pe/servicios/centro-sismologico-nacional/ultimo-sismo/sismos-reportados"
+    driver.get(url)
+    html = driver.page_source
+    driver.quit()
+
+    soup = BeautifulSoup(html, 'html.parser')
 
     
     soup = BeautifulSoup(html, 'html.parser')
