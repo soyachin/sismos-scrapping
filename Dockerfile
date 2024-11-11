@@ -1,48 +1,47 @@
 FROM public.ecr.aws/lambda/python:3.12
 
-RUN yum update -y && \
-    yum install -y \
+RUN apt-get update -y && \
+    apt-get install -y \
     unzip \
-    libX11 \
-    libXcomposite \
-    libXcursor \
-    libXdamage \
-    libXext \
-    libXi \
-    libXtst \
-    cups-libs \
-    libXScrnSaver \
-    libXrandr \
-    alsa-lib \
+    libx11-6 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxext6 \
+    libxi6 \
+    libxtst6 \
+    libxss1 \
+    libxrandr2 \
+    alsa-base \
+    alsa-utils \
     atk \
     gtk3 \
-    ipa-gothic-fonts \
-    xorg-x11-fonts-100dpi \
-    xorg-x11-fonts-75dpi \
-    xorg-x11-utils \
-    xorg-x11-fonts-cyrillic \
-    xorg-x11-fonts-Type1 \
-    xorg-x11-fonts-misc \
-    xorg-x11-server-Xvfb \
-    glibc-2.28
+    fonts-ipafont-gothic \
+    xfonts-100dpi \
+    xfonts-75dpi \
+    xfonts-utils \
+    xfonts-cyrillic \
+    xfonts-base \
+    xvfb \
+    libc6
 
 # chrome
-RUN curl -SL https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm -o google-chrome.rpm && \
-    yum install -y ./google-chrome.rpm && \
-    rm google-chrome.rpm
+RUN curl -SL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o google-chrome.deb && \
+    apt-get install -y ./google-chrome.deb && \
+    rm google-chrome.deb
 
-# chromedriver
 RUN curl -SL https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip -o chromedriver.zip && \
     unzip chromedriver.zip && \
     mv chromedriver /usr/local/bin/ && \
+    rm chromedriver.zipr/local/bin/ && \
     rm chromedriver.zip
 
-# python packages
+RUN pip install --upgrade pip && \
+    pip install selenium requests beautifulsoup4 boto3
 RUN pip install --upgrade pip && \
     pip install selenium requests beautifulsoup4 boto3
 
 # lambda code copy
 COPY sismos.py ${LAMBDA_TASK_ROOT}
 
-# 
 CMD ["sismos.lambda_handler"]
