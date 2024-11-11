@@ -25,20 +25,23 @@ def lambda_handler(event, context):
 
     soup = BeautifulSoup(html, 'html.parser')
 
-    table = soup.find('table')
+    table = soup.find('table', {'id': 'sismosreportados'})
     if not table:
+        print("No se encontró la tabla en la página web")
         return {
             'statusCode': 404,
             'body': 'No se encontró la tabla en la página web'
         }
 
     headers = [header.text.strip() for header in table.find_all('th')]
+    print("Encabezados extraídos:", headers)
 
     # Extraer las filas de la tabla
     rows = []
-    for row in table.find_all('tr')[1:]:  # Omitir el encabezado
+    for row in table.find('tbody').find_all('tr'):  # Buscar en el cuerpo de la tabla
         cells = row.find_all('td')
         if len(cells) != len(headers):
+            print("Fila omitida por longitud inconsistente:", cells)
             continue  # Skip rows that don't match the header length
         rows.append({headers[i]: cell.text.strip() for i, cell in enumerate(cells)})
 
@@ -60,6 +63,8 @@ def lambda_handler(event, context):
         for row in rows:
             row['id'] = str(uuid.uuid4())
             batch.put_item(Item=row)
+
+    print("Datos guardados en DynamoDB")
 
     return {
         'statusCode': 200,
