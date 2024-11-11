@@ -4,7 +4,6 @@ service: sismos-scrapping
 provider:
   name: aws
   runtime: python3.12
-  # Default memory size for functions (default: 1024MB)
   memorySize: 1024
   timeout: 30
   iam:
@@ -12,7 +11,6 @@ provider:
 
 functions:
   sismos:
-    handler: sismos.lambda_handler
     image:
       name: lambda-selenium
       command: ["sismos.lambda_handler"]
