@@ -14,10 +14,9 @@ def lambda_handler(event, context):
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--single-process")
     chrome_options.add_argument("--disable-gpu")
-    chrome_options.binary_location = "/opt/google/chrome/google-chrome"
+    chrome_options.binary_location = "/opt/chrome/chrome"
 
-    # Initialize the WebDriver
-    driver = webdriver.Chrome(service=ChromeService("/usr/local/bin/chromedriver"), options=chrome_options)
+    driver = webdriver.Chrome(service=ChromeService("/opt/chromedriver"), options=chrome_options)
 
     url = "https://www.igp.gob.pe/servicios/centro-sismologico-nacional/ultimo-sismo/sismos-reportados"
     driver.get(url)
