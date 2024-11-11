@@ -24,7 +24,7 @@ resources:
     TablaWebScrapping:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: Sismos
+        TableName: Sismostry2
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
