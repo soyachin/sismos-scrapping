@@ -8,6 +8,10 @@ provider:
   timeout: 30
   iam:
     role: arn:aws:iam::060098569939:role/LabRole
+  ecr:
+    images:
+      lambda-selenium:
+        path: ./
 
 functions:
   sismos:
@@ -19,12 +23,6 @@ package:
   exclude:
     - node_modules/**
     - selenium-layer/**
-
-custom:
-  ecr:
-    images:
-      lambda-selenium:
-        path: ./
 
 resources:
   Resources:
