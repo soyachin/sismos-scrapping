@@ -25,9 +25,6 @@ def lambda_handler(event, context):
 
     soup = BeautifulSoup(html, 'html.parser')
 
-    
-    soup = BeautifulSoup(html, 'html.parser')
-
     table = soup.find('table')
     if not table:
         return {
@@ -35,7 +32,7 @@ def lambda_handler(event, context):
             'body': 'No se encontró la tabla en la página web'
         }
 
-    headers = [header.text for header in table.find_all('th')]
+    headers = [header.text.strip() for header in table.find_all('th')]
 
     # Extraer las filas de la tabla
     rows = []
@@ -43,7 +40,10 @@ def lambda_handler(event, context):
         cells = row.find_all('td')
         if len(cells) != len(headers):
             continue  # Skip rows that don't match the header length
-        rows.append({headers[i]: cell.text for i, cell in enumerate(cells)})
+        rows.append({headers[i]: cell.text.strip() for i, cell in enumerate(cells)})
+
+    # Imprimir los datos extraídos para depuración
+    print("Datos extraídos:", rows)
 
     # Guardar los datos en DynamoDB
     dynamodb = boto3.resource('dynamodb')
